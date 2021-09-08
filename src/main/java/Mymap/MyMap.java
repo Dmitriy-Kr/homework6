@@ -10,6 +10,10 @@ public class MyMap<K, V> {
 
     private MapNode<K, V>[] table = (MapNode<K, V>[]) new MapNode[8];
 
+    Set<Node<K, V>> mapSat;
+
+    Set<K> keySet;
+
     public int getSize() {
         return size;
     }
@@ -38,45 +42,48 @@ public class MyMap<K, V> {
     }
 
     public Set<Node<K, V>> mapSat() {
-        return new AbstractSet<Node<K, V>>() {
-            @Override
-            public Iterator<Node<K, V>> iterator() {
-                return new Iterator<Node<K, V>>() {
-                    MapNode<K, V> currentNode;
-                    int currentIndex;
+        if (mapSat == null) {
+            mapSat = new AbstractSet<Node<K, V>>() {
+                @Override
+                public Iterator<Node<K, V>> iterator() {
+                    return new Iterator<Node<K, V>>() {
+                        MapNode<K, V> currentNode;
+                        int currentIndex;
 
-                    {
-                        while (currentNode == null && currentIndex < table.length) {
-                            currentNode = table[currentIndex++];
-                        }
-                    }
-
-                    @Override
-                    public boolean hasNext() {
-                        return currentNode != null;
-                    }
-
-                    @Override
-                    public Node<K, V> next() {
-                        Node<K, V> result = currentNode;
-                        if (currentNode.next != null) {
-                            currentNode = currentNode.next;
-                        } else {
-                            currentNode = null;
+                        {
                             while (currentNode == null && currentIndex < table.length) {
                                 currentNode = table[currentIndex++];
                             }
                         }
-                        return result;
-                    }
-                };
-            }
 
-            @Override
-            public int size() {
-                return size;
-            }
-        };
+                        @Override
+                        public boolean hasNext() {
+                            return currentNode != null;
+                        }
+
+                        @Override
+                        public Node<K, V> next() {
+                            Node<K, V> result = currentNode;
+                            if (currentNode.next != null) {
+                                currentNode = currentNode.next;
+                            } else {
+                                currentNode = null;
+                                while (currentNode == null && currentIndex < table.length) {
+                                    currentNode = table[currentIndex++];
+                                }
+                            }
+                            return result;
+                        }
+                    };
+                }
+
+                @Override
+                public int size() {
+                    return size;
+                }
+            };
+        }
+        return mapSat;
     }
 
 
@@ -175,44 +182,47 @@ public class MyMap<K, V> {
     }
 
     public Set<K> keySet() {
-        return new AbstractSet<K>() {
-            @Override
-            public Iterator<K> iterator() {
-                return new Iterator<K>() {
-                    MapNode<K, V> currentNode;
-                    int currentIndex;
+        if (keySet == null) {
+            keySet = new AbstractSet<K>() {
+                @Override
+                public Iterator<K> iterator() {
+                    return new Iterator<K>() {
+                        MapNode<K, V> currentNode;
+                        int currentIndex;
 
-                    {
-                        while (currentNode == null && currentIndex < table.length) {
-                            currentNode = table[currentIndex++];
-                        }
-                    }
-
-                    @Override
-                    public boolean hasNext() {
-                        return currentNode != null;
-                    }
-
-                    @Override
-                    public K next() {
-                        Node<K, V> result = currentNode;
-                        if (currentNode.next != null) {
-                            currentNode = currentNode.next;
-                        } else {
-                            currentNode = null;
+                        {
                             while (currentNode == null && currentIndex < table.length) {
                                 currentNode = table[currentIndex++];
                             }
                         }
-                        return result.key;
-                    }
-                };
-            }
 
-            @Override
-            public int size() {
-                return size;
-            }
-        };
+                        @Override
+                        public boolean hasNext() {
+                            return currentNode != null;
+                        }
+
+                        @Override
+                        public K next() {
+                            Node<K, V> result = currentNode;
+                            if (currentNode.next != null) {
+                                currentNode = currentNode.next;
+                            } else {
+                                currentNode = null;
+                                while (currentNode == null && currentIndex < table.length) {
+                                    currentNode = table[currentIndex++];
+                                }
+                            }
+                            return result.key;
+                        }
+                    };
+                }
+
+                @Override
+                public int size() {
+                    return size;
+                }
+            };
+        }
+        return keySet;
     }
 }
